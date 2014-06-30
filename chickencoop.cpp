@@ -171,13 +171,13 @@ disableErrorTimer();
 // sample button
 void ChickenCoop::sampleButton(tPortPIN pin, int inputpin)
 {
-	byte tmp = buttons[pin] << 1;
+	byte smpltmp = buttons[pin] << 1;
 	// sample button/switch
 	if(digitalRead(inputpin)==HIGH)
 	{
-		tmp |= 0x01;
+		smpltmp |= 0x01;
 	}
-	buttons[pin] = tmp;
+	buttons[pin] = smpltmp;
 }
 
 // has to be called cyclic (ISR)
@@ -245,17 +245,17 @@ boolean ChickenCoop::getPinStatus(tPortPIN pin) {
 void ChickenCoop::checkLight() {
 	if(lightFunc!=NULL)
 	{
-		float lux = lightFunc();
-		if(lux >= 0 && lux < configuration.luxThresholdNight) {
+		float llux = lightFunc();
+		if(((int)llux) >= 0 && ((int)llux) < configuration.luxThresholdNight) {
 			system.lightstatus = NIGHT;
-		} else if (lux > configuration.luxThresholdDay) {
+		} else if (((int)llux) > configuration.luxThresholdDay) {
 			system.lightstatus = DAY;
-		} else if (lux < configuration.luxThresholdDay && lux > configuration.luxThresholdNight) {
+		} else if (((int)llux) < configuration.luxThresholdDay && ((int)llux) > configuration.luxThresholdNight) {
 			system.lightstatus = DUSKDAWN;
 		}else {
 			system.lightstatus = STATUSUNKNOWN;
 		}
-		system.lux = lux;
+		system.lux = llux;
 	}
 }
 
@@ -431,8 +431,8 @@ void ChickenCoop::process() {
 				setSystemState(SYSTEM_START_ERROR);
 			}
 			if(getDoorStatus()==DOOR_CLOSE) {
-				disableEngine();
 				setEngineStatus(ENGINE_STOP);
+				disableEngine();
 				disableErrorTimer();
 				setSystemState(SYSTEM_CLOSE);
 			}
@@ -449,8 +449,8 @@ void ChickenCoop::process() {
 				setSystemState(SYSTEM_START_ERROR);
 			}
 			if(getDoorStatus()==DOOR_OPEN) {
-				disableEngine();
 				setEngineStatus(ENGINE_STOP);
+				disableEngine();
 				disableErrorTimer();
 				setSystemState(SYSTEM_OPEN);
 			}
@@ -461,8 +461,9 @@ void ChickenCoop::process() {
 		break;
  		case  SYSTEM_OPEN:
 			// check tmr1: do adc
-			checkLight();
+
 			checkSensors();
+			checkLight();
 			if(getPinStatus(BUTTON_DOWN)==true|| 
 				(configuration.mode==AUTO && getLightStatus()==NIGHT )) {
 				setSystemState(SYSTEM_START_CLOSING);
@@ -473,8 +474,9 @@ void ChickenCoop::process() {
 		break;
  		case  SYSTEM_CLOSE:
 			// check tmr1: do adc
-			checkLight();
+
 			checkSensors();
+			checkLight();
 			if(getPinStatus(BUTTON_UP)==true ||
 				(configuration.mode==AUTO && getLightStatus()==DAY)) {
 				setSystemState(SYSTEM_START_OPENING);
