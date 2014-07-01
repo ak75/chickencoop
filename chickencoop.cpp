@@ -250,7 +250,7 @@ void ChickenCoop::checkLight() {
 			system.lightstatus = NIGHT;
 		} else if (((int)llux) > configuration.luxThresholdDay) {
 			system.lightstatus = DAY;
-		} else if (((int)llux) < configuration.luxThresholdDay && ((int)llux) > configuration.luxThresholdNight) {
+		} else if (((int)llux) <= configuration.luxThresholdDay && ((int)llux) >= configuration.luxThresholdNight) {
 			system.lightstatus = DUSKDAWN;
 		}else {
 			system.lightstatus = STATUSUNKNOWN;
