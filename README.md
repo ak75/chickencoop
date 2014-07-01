@@ -17,3 +17,5 @@ https://github.com/adafruit/Adafruit_Sensor
 https://github.com/adafruit/Adafruit_TSL2561
 
 https://github.com/PaulStoffregen/TimerOne
+
+https://github.com/kroimon/Arduino-SerialCommand 
