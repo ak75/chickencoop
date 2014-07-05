@@ -12,6 +12,7 @@
 
 #define TIMER_US 20000                         // 20mS set timer duration in microseconds 
 const int SENSOR_INT = 20;
+// eeprom start address
 int STARTADDR = 0;
 
 ChickenCoop coop;
@@ -26,11 +27,13 @@ Adafruit_TSL2561_Unified tsl = Adafruit_TSL2561_Unified(TSL2561_ADDR_FLOAT, 1234
 
 SerialCommand SCmd;   // The demo SerialCommand object
 
+// timer isr      
 void timerIsr()
 {
   coop.processISR(SENSOR_INT);
 }
 
+// configure light sensor 
 void configureTSL()
 {
   // tsl.setGain(TSL2561_GAIN_1X);      /* No gain ... use in bright light to avoid sensor saturation */
@@ -45,15 +48,17 @@ void configureTSL()
   tsl.begin();
 }
 
+// light function called from coop main loop
 float getLight()
 {
 /* Get a new sensor event */ 
   sensors_event_t event;
-configureTSL();
+  configureTSL();
   tsl.getEvent(&event);
   return event.light;
 }
 
+// update func called from coop lib when state change has occurred 
 void systemUpdate(const tSYSTEM* system)
 {
   Communication.print("update:");
@@ -355,7 +360,9 @@ void setup() {
 
 void loop() {
 
+  // read from BT
   SCmd.readSerial();
+  // main function from coop lib
   coop.process();
 
 }
